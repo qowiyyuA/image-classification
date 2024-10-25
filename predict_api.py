@@ -4,7 +4,7 @@ import tensorflow as tf
 app = Flask(__name__)
 
 # Load the H5 model
-model = tf.keras.models.load_model('image_classification_model.h5')
+model = tf.keras.models.load_model('/image_classification_model.h5')
 
 @app.route('/predict', methods=['POST'])
 def predict():
