@@ -5,7 +5,7 @@ import numpy as np
 
 app = Flask(__name__)
 
-model = tf.keras.models.load_model('image_classification_model.h5')
+model = tf.keras.models.load_model('model_image_classification.tflite')
 
 @app.route('/predict', methods=['POST'])
 def predict():
