@@ -9,20 +9,27 @@ model = tf.keras.models.load_model('image_classification_model.h5')
 
 @app.route('/predict', methods=['POST'])
 def predict():
-    # Periksa apakah ada file di request
+    # Check if file is in request
     if 'input' not in request.files:
-        return jsonify({"error": "File tidak ditemukan di permintaan"}), 400
+        return jsonify({"error": "File not found in request"}), 400
 
-    # Ambil file gambar dari permintaan
+    # Get the image file from request
     file = request.files['input']
-    image = Image.open(file).resize((224, 224))  # Sesuaikan ukuran dengan input model
-    image = np.array(image) / 255.0  # Normalisasi jika perlu
-    image = np.expand_dims(image, axis=0)  # Tambahkan batch dimension
 
-    prediction = model.predict(image)  # Prediksi
-    prediction = prediction.tolist()
+    try:
+        image = Image.open(file).resize((150, 150))  # Resize for model input
+        image = np.array(image) / 255.0  # Normalize if needed
+        image = np.expand_dims(image, axis=0)  # Add batch dimension
+    except Exception as e:
+        return jsonify({"error": f"Image processing error: {str(e)}"}), 400
+
+    try:
+        prediction = model.predict(image)  # Make prediction
+        prediction = prediction.tolist()
+    except Exception as e:
+        return jsonify({"error": f"Prediction error: {str(e)}"}), 500
 
     return jsonify({'prediction': prediction})
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # Fixed __name_
     app.run(port=5000)
